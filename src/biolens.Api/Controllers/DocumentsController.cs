@@ -62,9 +62,13 @@ public class DocumentsController : ControllerBase
 
         try
         {
+            // Buffer the file to a MemoryStream so we can read it twice (parse + save)
+            using var buffer = new MemoryStream();
+            await file.CopyToAsync(buffer, ct);
+
             // Parse the document
-            using var stream = file.OpenReadStream();
-            var paragraphs = await _parser.ParseDocxAsync(stream, ct);
+            buffer.Position = 0;
+            var paragraphs = await _parser.ParseDocxAsync(buffer, ct);
 
             if (paragraphs.Count == 0)
                 return BadRequest(new { error = "The document appears to be empty or could not be parsed." });
@@ -82,8 +86,8 @@ public class DocumentsController : ControllerBase
             };
 
             // Save the original file
-            using var saveStream = file.OpenReadStream();
-            await _storage.SaveUploadedFileAsync(doc.Id, saveStream, file.FileName, ct);
+            buffer.Position = 0;
+            await _storage.SaveUploadedFileAsync(doc.Id, buffer, file.FileName, ct);
 
             // Save parsed document
             await _storage.SaveParsedDocumentAsync(doc, ct);

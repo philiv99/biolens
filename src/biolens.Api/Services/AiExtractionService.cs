@@ -139,9 +139,11 @@ public class AiExtractionService : IExtractionService
         if (!response.IsSuccessStatusCode)
         {
             var errorBody = await response.Content.ReadAsStringAsync(ct);
-            _logger.LogError("AI API returned {Status}: {Body}", response.StatusCode, errorBody);
+            // Sanitize error body — truncate and avoid logging potential token data
+            var safeError = errorBody.Length > 200 ? errorBody[..200] + "..." : errorBody;
+            _logger.LogError("AI API returned {Status}: {Body}", response.StatusCode, safeError);
             throw new InvalidOperationException(
-                $"AI API returned {(int)response.StatusCode}: {errorBody}");
+                $"AI API returned {(int)response.StatusCode}. Check your API token and settings.");
         }
 
         var responseJson = await response.Content.ReadAsStringAsync(ct);

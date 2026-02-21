@@ -14,18 +14,30 @@ builder.Services.AddSingleton<IStorageService, FlatFileStorageService>();
 builder.Services.AddTransient<IDocumentParserService, DocumentParserService>();
 builder.Services.AddTransient<IExtractionService, AiExtractionService>();
 
-// CORS — allow the React dev server and common origins
+// CORS — environment-specific origins
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy
-            .WithOrigins(
-                "http://localhost:5173",
-                "http://localhost:5174",
-                "http://localhost:3000")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+        if (builder.Environment.IsDevelopment())
+        {
+            policy
+                .WithOrigins(
+                    "http://localhost:5173",
+                    "http://localhost:5174",
+                    "http://localhost:3000")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        }
+        else
+        {
+            var origins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+                ?? Array.Empty<string>();
+            policy
+                .WithOrigins(origins)
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        }
     });
 });
 

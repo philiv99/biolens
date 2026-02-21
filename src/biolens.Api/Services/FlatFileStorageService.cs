@@ -52,8 +52,20 @@ public class FlatFileStorageService : IStorageService
 
     public async Task SaveUploadedFileAsync(string docId, Stream fileStream, string fileName, CancellationToken ct = default)
     {
-        var ext = Path.GetExtension(fileName);
-        var filePath = Path.Combine(_storageRoot, "uploads", $"{docId}{ext}");
+        // Sanitize extension: only allow .docx, strip any path separators
+        var ext = Path.GetExtension(fileName)?.ToLowerInvariant() ?? string.Empty;
+        ext = ext.Replace("/", "").Replace("\\", "");
+        if (ext != ".docx")
+            throw new ArgumentException("Only .docx files are allowed.");
+
+        var safeName = $"{docId}{ext}";
+        var filePath = Path.Combine(_storageRoot, "uploads", safeName);
+
+        // Verify the resolved path is still within the uploads directory
+        var fullPath = Path.GetFullPath(filePath);
+        var uploadsDir = Path.GetFullPath(Path.Combine(_storageRoot, "uploads"));
+        if (!fullPath.StartsWith(uploadsDir, StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException("Invalid file path detected.");
 
         await using var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
         await fileStream.CopyToAsync(fs, ct);
