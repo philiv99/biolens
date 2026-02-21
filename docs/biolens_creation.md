@@ -30,44 +30,44 @@
 ### Phase 1 — Scaffolding & Auth
 
 - [x] 1.1 Initialize repo, create directory structure, .gitignore, .env.example
-- [ ] 1.2 Create .NET Web API project (biolens.Api)
-- [ ] 1.3 Scaffold React + Vite + TypeScript frontend (biolens.Web)
-- [ ] 1.4 Implement auth module (authApi, AuthContext, ProtectedRoute, LoginScreen, RegisterScreen)
-- [ ] 1.5 Configure CORS on backend, Vite proxy for dev
+- [x] 1.2 Create .NET Web API project (biolens.Api)
+- [x] 1.3 Scaffold React + Vite + TypeScript frontend (biolens.Web)
+- [x] 1.4 Implement auth module (authApi, AuthContext, ProtectedRoute, LoginScreen, RegisterScreen)
+- [x] 1.5 Configure CORS on backend, Vite proxy for dev
 
 ### Phase 2 — Document Upload & Parsing
 
-- [ ] 2.1 Build file upload endpoint `POST /api/documents/upload` (accepts .docx + subject names)
-- [ ] 2.2 Implement .docx parser service (paragraphs → text blocks with index/position)
-- [ ] 2.3 Store parsed document as flat JSON (`storage/parsed/{docId}.json`)
-- [ ] 2.4 Build `GET /api/documents` and `GET /api/documents/{id}` endpoints
+- [x] 2.1 Build file upload endpoint `POST /api/documents/upload` (accepts .docx + subject names)
+- [x] 2.2 Implement .docx parser service (paragraphs → text blocks with index/position)
+- [x] 2.3 Store parsed document as flat JSON (`storage/parsed/{docId}.json`)
+- [x] 2.4 Build `GET /api/documents` and `GET /api/documents/{id}` endpoints
 
 ### Phase 3 — AI Extraction Pipeline
 
-- [ ] 3.1 Define extraction data model (BiographicalExtraction: people, events, places, conversations, thoughts)
-- [ ] 3.2 Build AI extraction service (sends parsed text to LLM, returns structured data)
-- [ ] 3.3 Build `POST /api/documents/{id}/extract` endpoint
-- [ ] 3.4 Store extraction results as flat JSON (`storage/extractions/{docId}.json`)
-- [ ] 3.5 Build `GET /api/documents/{id}/extraction` endpoint
+- [x] 3.1 Define extraction data model (BiographicalExtraction: people, events, places, conversations, thoughts)
+- [x] 3.2 Build AI extraction service (sends parsed text to LLM, returns structured data)
+- [x] 3.3 Build `POST /api/documents/{id}/extract` endpoint
+- [x] 3.4 Store extraction results as flat JSON (`storage/extractions/{docId}.json`)
+- [x] 3.5 Build `GET /api/documents/{id}/extraction` endpoint
 
 ### Phase 4 — Results UI
 
-- [ ] 4.1 Build upload screen (file picker + name/alias input + AI token config)
-- [ ] 4.2 Build document list screen
-- [ ] 4.3 Build extraction results table (tabular summary grouped by category)
-- [ ] 4.4 Build drill-down detail view with document source reference
-- [ ] 4.5 AI settings panel for token management
-- [ ] 4.6 App layout with nav, user info, logout
+- [x] 4.1 Build upload screen (file picker + name/alias input + AI token config)
+- [x] 4.2 Build document list screen
+- [x] 4.3 Build extraction results table (tabular summary grouped by category)
+- [x] 4.4 Build drill-down detail view with document source reference
+- [x] 4.5 AI settings panel for token management
+- [x] 4.6 App layout with nav, user info, logout
 
 ### Phase 5 — Testing & Quality
 
-- [ ] 5.1 Unit tests for document parsing service
-- [ ] 5.2 Unit tests for extraction models and service
-- [ ] 5.3 Auth module tests (login, logout, protected route)
-- [ ] 5.4 Component tests for Upload and Results screens
-- [ ] 5.5 Code review
-- [ ] 5.6 Security review
-- [ ] 5.7 QA sign-off
+- [x] 5.1 Unit tests for document parsing service
+- [x] 5.2 Unit tests for extraction models and service
+- [x] 5.3 Auth module tests (login, logout, protected route)
+- [x] 5.4 Component tests for Upload and Results screens
+- [x] 5.5 Code review
+- [x] 5.6 Security review
+- [x] 5.7 QA sign-off
 
 ---
 
@@ -173,3 +173,5 @@
 - **2026-02-21**: Project created. Chose flat-file JSON storage over database per user request. MySQL can be added later.
 - **2026-02-21**: AI extraction uses user-provided OpenAI-compatible token. Backend proxies the LLM call to keep token handling server-side per request.
 - **2026-02-21**: Document paragraphs are indexed at parse time to enable source-reference drill-down from extraction results.
+- **2026-02-21**: Security review completed. Fixed: path traversal in file storage, CORS environment-specific config, error log sanitization, stream double-read. Noted: X-User-Id header auth is lightweight (relies on CopilotSdk.Api for actual auth). No rate limiting yet (deferred to Stage 2).
+- **2026-02-21**: QA sign-off complete. 27 backend tests + 26 frontend tests = 53 total. All builds pass. Stage 1 MVP complete.
